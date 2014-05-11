@@ -64,12 +64,8 @@ public class EfficientIndirectionCalculator implements Callable<Integer> {
                 if (otherIndex + thisIndex >= min) continue;
                 List<Doc> fromDocs = fromThis.get(thisIndex);
                 List<Doc> targetDocs = fromOther.get(otherIndex + 1);
-                for (Doc target : targetDocs) {
-                    if (fromDocs.contains(target) && otherIndex + thisIndex < min) {
-//                        System.out.println("Link ("+thisIndex+") found to " + target.title + " (" +otherIndex+")");
-                        min = thisIndex + otherIndex;
-//                        return thisIndex + otherIndex;
-                    }
+                if (!Collections.disjoint(fromDocs, targetDocs)) {
+                    min = thisIndex + otherIndex;
                 }
             }
         }

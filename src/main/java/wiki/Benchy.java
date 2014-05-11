@@ -11,8 +11,8 @@ import wiki.doc.EfficientIndirectionCalculator;
 public class Benchy {
     public static void main(String[] args) {
         DbConnector dbc = new DbConnector("localhost");
-        Doc one = DocResource.getDoc(35218121L, dbc);
-        Doc two = DocResource.getDoc(946195L, dbc);
+        Doc one = DocResource.getDoc(789980L, dbc);
+        Doc two = DocResource.getDoc(3026593L, dbc);
         EfficientIndirectionCalculator eic = new EfficientIndirectionCalculator(one, two, dbc, 6);
         eic.call();
     }
