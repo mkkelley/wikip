@@ -2,6 +2,7 @@ package wiki.doc;
 
 import wiki.DbConnector;
 
+import java.util.List;
 import java.util.concurrent.Callable;
 
 /**
@@ -20,7 +21,37 @@ public class IndirectionCalculator implements Callable<Integer> {
         this.limit = limit;
     }
     @Override
-    public Integer call() throws Exception {
-        return start.getIndirection(search, dbc, limit);
+    public Integer call() {
+        return getIndirection();
     }
+
+    public int getIndirection() {
+        if (limit == -1) {
+            return -1;
+        }
+//        System.out.println("getIndirection : searching for " + other.toString() + " in "+ this.toString() +" limit " + limit);
+        List<Doc> linkedDocs = start.getLinkedDocs(dbc);
+        if (linkedDocs.contains(search)) {
+            System.out.println(this.toString() + " links to " + search.toString());
+            return 0;
+        } else {
+            int minIndirection = -1;
+            for (Doc d : linkedDocs) {
+//                System.out.println(this.toString() + " links to " + d.toString());
+                IndirectionCalculator ic = new IndirectionCalculator(d, search, dbc, limit - 1);
+                int indirection = ic.call();
+                if (indirection == 0) {
+                    System.out.println(d.toString() + " links to " + search.toString());
+                    return 1;
+                }
+                if (indirection != -1 && (minIndirection == -1 || indirection < minIndirection)) {
+                    minIndirection = indirection;
+                    System.out.println("new minInd: " + minIndirection);
+                }
+            }
+            if (minIndirection == -1) return minIndirection;
+            else return minIndirection + 1;
+        }
+    }
+
 }

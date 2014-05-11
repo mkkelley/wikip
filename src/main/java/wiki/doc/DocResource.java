@@ -34,11 +34,7 @@ public class DocResource {
     public static List<Doc> getLinkedDocs(Doc doc, DbConnector dbc) {
 
         PreparedStatementCreator psc = pscf.newPreparedStatementCreator(new Object[]{doc.id});
-        List<Doc> docs = dbc.jdbcTemplate.query(psc, (resultSet,i) -> {
-            long id = resultSet.getLong("id");
-            String title = resultSet.getString("title");
-            return new Doc(id, title, "");
-        });
+        List<Doc> docs = dbc.jdbcTemplate.query(psc, docIdMapper);
         return docs;
     }
 
@@ -59,10 +55,7 @@ public class DocResource {
                     "INNER JOIN links ON links.toPage = pages.id " +
                     "WHERE links.fromPage IN " + inList;
             Object[] ids = docs.stream().map((doc) -> doc.id).toArray();
-            List<Doc> linkedDocs = dbc.jdbcTemplate.query(sql, ids, (resultSet, i) -> {
-                long id = resultSet.getLong("id");
-                return new Doc(id, "", "");
-            });
+            List<Doc> linkedDocs = dbc.jdbcTemplate.query(sql, ids, docIdMapper);
 
             return linkedDocs;
         } else {
@@ -72,6 +65,7 @@ public class DocResource {
         }
     }
 
+    private static DocIdMapper docIdMapper = new DocIdMapper();
     private static PreparedStatementCreatorFactory pscf_linking = new PreparedStatementCreatorFactory(
             "SELECT pages.id, title FROM pages " +
                     "INNER JOIN links ON links.fromPage = pages.id " +
@@ -79,11 +73,7 @@ public class DocResource {
             new int[]{JDBCType.BIGINT.ordinal()});
     public static List<Doc> getLinkingDocs(Doc target, DbConnector dbc) {
         PreparedStatementCreator psc = pscf_linking.newPreparedStatementCreator(new Object[]{target.id});
-        List<Doc> docs = dbc.jdbcTemplate.query(psc, (resultSet, i) -> {
-            long id = resultSet.getLong("id");
-            String title = resultSet.getString("title");
-            return new Doc(id, title, "");
-        });
+        List<Doc> docs = dbc.jdbcTemplate.query(psc, docIdMapper);
         return docs;
     }
 
@@ -96,10 +86,7 @@ public class DocResource {
                     "INNER JOIN links ON links.fromPage = pages.id " +
                     "WHERE links.toPage IN " + inList;
             Object[] ids = docs.stream().map((doc) -> doc.id).toArray();
-            List<Doc> linkingDocs = dbc.jdbcTemplate.query(sql, ids, (resultSet, i) -> {
-                long id = resultSet.getLong("id");
-                return new Doc(id, "", "");
-            });
+            List<Doc> linkingDocs = dbc.jdbcTemplate.query(sql, ids, docIdMapper);
 
             return linkingDocs;
         } else {

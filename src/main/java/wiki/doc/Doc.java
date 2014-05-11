@@ -39,41 +39,7 @@ public class Doc implements Savable {
         this.text = text;
     }
 
-    public List<Doc> getLinkingDocs(DbConnector dbc) {
-//        if (linkingDocs == null) {
-//            linkingDocs = DocResource.getLinkingDocs(this, dbc);
-//        }
-//        return linkingDocs;
-        return DocResource.getLinkingDocs(this, dbc);
-        /*TODO: Implement getLinkingDocs.
-        In essence, the search space can be significantly reduced if a series
-        of operations is applied... get (limit/2 + limit%2) levels of links
-        from the start and (limit/2) levels of links from the end. Then, check
-        each level against each other level from the other side, starting from
-        level 0 (e.g. check if the source doc links to the target doc.
-            This basically makes the search space a diamond instead of a
-            triangle. This could reduce the running time unimaginably.
-            For example: let a be the average number of links each page has
-            Currently, the running time is (a^limit)!? This change would
-            reduce the running time to (a^(limit/2+limit%2) + a^(limit/2))
-            which simplifies to a ratio of (small to large, worst case, odd)
-            (a+1)/(a^(x/2)); given a=100 and x=5, that's .00101!!
-        NOTE: This application can never be run on the server unless I get a
-        USB GbE card. Between my desktop and laptop (client, database), it
-        currently pushes up to 33 MB/s
-        TODO: Check if increasing the number of threads increases throughput
-        Alternate heuristic: advance through limit levels. Try 1, 2, 3...limit
-            Because of the _huge_ time gap between each level, it could be
-            more efficient.
-        TODO: Remove Wikipedia: and File: articles. They're meta.
-         */
-    }
-
     public List<Doc> getLinkedDocs(DbConnector dbc) {
-//        if (linkedDocs == null) {
-//            linkedDocs = DocResource.getLinkedDocs(this, dbc);
-//        }
-//        return linkedDocs;
         return DocResource.getLinkedDocs(this, dbc);
     }
 
@@ -120,34 +86,6 @@ public class Doc implements Savable {
             else return minIndirection + 1;
         }
     }
-
-    public int getIndirection(Doc other, DbConnector dbc, int limit) {
-        if (limit == -1) {
-            return -1;
-        }
-//        System.out.println("getIndirection : searching for " + other.toString() + " in "+ this.toString() +" limit " + limit);
-        if (getLinkedDocs(dbc).contains(other)) {
-            System.out.println(this.toString() + " links to " + other.toString());
-            return 0;
-        } else {
-            int minIndirection = -1;
-            for (Doc d : getLinkedDocs(dbc)) {
-//                System.out.println(this.toString() + " links to " + d.toString());
-                int indirection = d.getIndirection(other, dbc, limit - 1);
-                if (indirection == 0) {
-                    System.out.println(d.toString() + " links to " + other.toString());
-                    return 1;
-                }
-                if (indirection != -1 && (minIndirection == -1 || indirection < minIndirection)) {
-                    minIndirection = indirection;
-                    System.out.println("new minInd: " + minIndirection);
-                }
-            }
-            if (minIndirection == -1) return minIndirection;
-            else return minIndirection + 1;
-        }
-    }
-
     public ArrayList<String> getTextLinks() {
         ArrayList<String> linkList = new ArrayList<>();
 
