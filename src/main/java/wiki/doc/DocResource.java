@@ -58,8 +58,8 @@ public class DocResource {
 
             return linkedDocs;
         } else {
-            List<DocId> first = getAllLinking(docs.subList(0, 30000), dbc);
-            first.addAll(getAllLinking(docs.subList(30000, docs.size()), dbc));
+            List<DocId> first = getAllLinkedDocs(docs.subList(0, 30000), dbc);
+            first.addAll(getAllLinkedDocs(docs.subList(30000, docs.size()), dbc));
             return first;
         }
     }
