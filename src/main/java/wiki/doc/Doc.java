@@ -17,21 +17,6 @@ public class Doc implements Savable {
     public final long id;
     public final String title;
     public final String text;
-    private final static ExecutorService threadPool = Executors.newFixedThreadPool(8);
-
-    private synchronized Future<Integer> submitJob(Callable<Integer> call) {
-        return threadPool.submit(call);
-    }
-
-    private synchronized void killThreadPool() throws InterruptedException {
-        if (threadPool.isShutdown()) {
-            return;
-        }
-        threadPool.shutdownNow();
-        while (!threadPool.isShutdown()) {
-            Thread.sleep(10);
-        }
-    }
 
     public Doc(long id, String title, String text) {
         this.id = id;
@@ -43,49 +28,6 @@ public class Doc implements Savable {
         return DocResource.getLinkedDocs(this, dbc);
     }
 
-    public int parallelGetIndirection(Doc other, DbConnector dbc, int limit) {
-        if (limit == -1) {
-            return -1;
-        }
-
-        List<Doc> linkedDocs = getLinkedDocs(dbc);
-        if (linkedDocs.contains(other)) {
-            System.out.println(this.toString() + " links to " + other.toString());
-            return 0;
-        } else {
-            ArrayList<Future<Integer>> tasks = new ArrayList<>(linkedDocs.size());
-            for (Doc d : linkedDocs) {
-                IndirectionCalculator ic = new IndirectionCalculator(d, other, dbc, limit - 1);
-                tasks.add(submitJob(ic));
-            }
-            System.out.println("All tasks submitted.");
-
-            int minIndirection = -1;
-            int n = 0;
-            for (Future<Integer> result : tasks) {
-                try {
-                    int indirection = result.get();
-                    if (indirection == 0) {
-                        killThreadPool();
-                        return 1;
-                    }
-                    if (indirection != -1 && (minIndirection == -1 || indirection < minIndirection)) {
-                        minIndirection = indirection;
-                        System.out.println("new minInd: " + minIndirection);
-                    }
-                } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
-                    System.exit(1);
-                }
-                n++;
-                System.out.println("Done " + n + "/" + tasks.size());
-            }
-            System.out.println("All futures processed.");
-            threadPool.shutdown();
-            if (minIndirection == -1) return -1;
-            else return minIndirection + 1;
-        }
-    }
     public ArrayList<String> getTextLinks() {
         ArrayList<String> linkList = new ArrayList<>();
 
