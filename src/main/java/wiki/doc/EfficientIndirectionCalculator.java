@@ -36,25 +36,25 @@ public class EfficientIndirectionCalculator implements Callable<Integer> {
     private int getIndirectionEfficient() {
         int levelsFromThis = limit / 2 + limit % 2;
         int levelsFromOther = limit / 2 + 1;
-        Map<Integer, List<Doc>> fromThis = new HashMap<>();
-        Map<Integer, List<Doc>> fromOther = new HashMap<>();
+        Map<Integer, List<DocId>> fromThis = new HashMap<>();
+        Map<Integer, List<DocId>> fromOther = new HashMap<>();
 
-        List<Doc> thisList = new ArrayList<>();
+        List<DocId> thisList = new ArrayList<>();
         thisList.add(start);
-        List<Doc> otherList = new ArrayList<>();
+        List<DocId> otherList = new ArrayList<>();
         otherList.add(search);
 
         fromThis.put(0, thisList);
         fromOther.put(0, otherList);
 
         for (int i = 1; i <= levelsFromThis; i++) {
-            List<Doc> fromDocs = fromThis.get(i - 1);
-            List<Doc> toDocs = DocResource.getAllLinkedDocs(fromDocs, dbc);
+            List<DocId> fromDocs = fromThis.get(i - 1);
+            List<DocId> toDocs = DocResource.getAllLinkedDocs(fromDocs, dbc);
             fromThis.put(i, toDocs);
         }
         for (int i = 1; i <= levelsFromOther; i++) {
-            List<Doc> toDocs = fromOther.get(i - 1);
-            List<Doc> fromDocs = DocResource.getAllLinking(toDocs, dbc);
+            List<DocId> toDocs = fromOther.get(i - 1);
+            List<DocId> fromDocs = DocResource.getAllLinking(toDocs, dbc);
             fromOther.put(i, fromDocs);
         }
 
@@ -62,8 +62,8 @@ public class EfficientIndirectionCalculator implements Callable<Integer> {
         for (int thisIndex = 0; thisIndex < levelsFromThis + 1; thisIndex++) {
             for (int otherIndex = 0; otherIndex < levelsFromOther; otherIndex++) {
                 if (otherIndex + thisIndex >= min) continue;
-                List<Doc> fromDocs = fromThis.get(thisIndex);
-                List<Doc> targetDocs = fromOther.get(otherIndex + 1);
+                List<DocId> fromDocs = fromThis.get(thisIndex);
+                List<DocId> targetDocs = fromOther.get(otherIndex + 1);
                 if (!Collections.disjoint(fromDocs, targetDocs)) {
                     min = thisIndex + otherIndex;
                 }

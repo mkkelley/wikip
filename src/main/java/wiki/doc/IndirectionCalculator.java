@@ -10,11 +10,11 @@ import java.util.concurrent.Callable;
  * See LICENSE file for license information.
  */
 public class IndirectionCalculator implements Callable<Integer> {
-    protected final Doc start;
-    protected final Doc search;
+    protected final DocId start;
+    protected final DocId search;
     protected final DbConnector dbc;
     protected final int limit;
-    public IndirectionCalculator(Doc start, Doc search, DbConnector dbc, int limit) {
+    public IndirectionCalculator(DocId start, DocId search, DbConnector dbc, int limit) {
         this.start = start;
         this.search = search;
         this.dbc = dbc;
@@ -30,13 +30,13 @@ public class IndirectionCalculator implements Callable<Integer> {
             return -1;
         }
 //        System.out.println("getIndirection : searching for " + other.toString() + " in "+ this.toString() +" limit " + limit);
-        List<Doc> linkedDocs = start.getLinkedDocs(dbc);
+        List<DocId> linkedDocs = start.getLinkedDocs(dbc);
         if (linkedDocs.contains(search)) {
             System.out.println(this.toString() + " links to " + search.toString());
             return 0;
         } else {
             int minIndirection = -1;
-            for (Doc d : linkedDocs) {
+            for (DocId d : linkedDocs) {
 //                System.out.println(this.toString() + " links to " + d.toString());
                 IndirectionCalculator ic = new IndirectionCalculator(d, search, dbc, limit - 1);
                 int indirection = ic.call();

@@ -44,14 +44,13 @@ public class ParallelIndirectionCalculator implements Callable<Integer> {
             return -1;
         }
 
-        List<Long> linkedDocs = start.getLinkedDocs(dbc);
+        List<DocId> linkedDocs = start.getLinkedDocs(dbc);
         if (linkedDocs.contains(search.id)) {
             System.out.println(this.toString() + " links to " + search.toString());
             return 0;
         } else {
             ArrayList<Future<Integer>> tasks = new ArrayList<>(linkedDocs.size());
-            for (Long l : linkedDocs) {
-                Doc d = new Doc(l, "", "");
+            for (DocId d : linkedDocs) {
                 IndirectionCalculator ic = new IndirectionCalculator(d, search, dbc, limit - 1);
                 tasks.add(submitJob(ic));
             }

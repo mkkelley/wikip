@@ -13,19 +13,14 @@ import java.util.concurrent.*;
  * Created by Michael Kelley on 4/30/14.
  * See LICENSE file for license information.
  */
-public class Doc implements Savable {
-    public final long id;
+public class Doc extends DocId implements Savable {
     public final String title;
     public final String text;
 
     public Doc(long id, String title, String text) {
-        this.id = id;
+        super(id);
         this.title = title;
         this.text = text;
-    }
-
-    public List<Doc> getLinkedDocs(DbConnector dbc) {
-        return DocResource.getLinkedDocs(this, dbc);
     }
 
     public ArrayList<String> getTextLinks() {
@@ -56,20 +51,6 @@ public class Doc implements Savable {
     @Override
     public String toString() {
         return this.title;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof Doc)) {
-            return false;
-        }
-        Doc d = (Doc)o;
-        return d.id == this.id;
-    }
-
-    @Override
-    public int hashCode() {
-        return (int)id;
     }
 }
 

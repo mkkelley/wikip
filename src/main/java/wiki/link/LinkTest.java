@@ -4,6 +4,7 @@ import wiki.DbConnector;
 import wiki.doc.Doc;
 import wiki.doc.DocResource;
 import wiki.doc.IndirectionCalculator;
+import wiki.doc.ParallelIndirectionCalculator;
 
 /**
  * Created by Michael Kelley on 5/2/14.
@@ -34,7 +35,7 @@ public class LinkTest {
         Doc d = DocResource.getDoc(from, dbc);
         Doc other = DocResource.getDoc(to, dbc);
         long milis = System.currentTimeMillis();
-        int ind = d.parallelGetIndirection(other, dbc, 3);
+        int ind = new ParallelIndirectionCalculator(d, other, dbc, 3).call();
 //        int ind = d.getIndirectionEfficient(other, dbc, 3);
         System.out.println(ind);
         System.out.println(System.currentTimeMillis() - milis);

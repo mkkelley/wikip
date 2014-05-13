@@ -31,10 +31,9 @@ public class DocResource {
             "INNER JOIN links ON links.toPage = pages.id " +
             "WHERE links.fromPage = ?",
             new int[]{JDBCType.BIGINT.ordinal()});
-    public static List<Doc> getLinkedDocs(Doc doc, DbConnector dbc) {
-
+    public static List<DocId> getLinkedDocs(DocId doc, DbConnector dbc) {
         PreparedStatementCreator psc = pscf.newPreparedStatementCreator(new Object[]{doc.id});
-        List<Doc> docs = dbc.jdbcTemplate.query(psc, docIdMapper);
+        List<DocId> docs = dbc.jdbcTemplate.query(psc, docIdMapper);
         return docs;
     }
 
@@ -46,7 +45,7 @@ public class DocResource {
         sb.append(")");
         return sb.toString();
     }
-    public static List<Doc> getAllLinkedDocs(List<Doc> docs, DbConnector dbc) {
+    public static List<DocId> getAllLinkedDocs(List<DocId> docs, DbConnector dbc) {
         if (docs.size() == 0) {
             return new ArrayList<>(0);
         } else if (docs.size() <= 30000) {
@@ -55,11 +54,11 @@ public class DocResource {
                     "INNER JOIN links ON links.toPage = pages.id " +
                     "WHERE links.fromPage IN " + inList;
             Object[] ids = docs.stream().map((doc) -> doc.id).toArray();
-            List<Doc> linkedDocs = dbc.jdbcTemplate.query(sql, ids, docIdMapper);
+            List<DocId> linkedDocs = dbc.jdbcTemplate.query(sql, ids, docIdMapper);
 
             return linkedDocs;
         } else {
-            List<Doc> first = getAllLinking(docs.subList(0, 30000), dbc);
+            List<DocId> first = getAllLinking(docs.subList(0, 30000), dbc);
             first.addAll(getAllLinking(docs.subList(30000, docs.size()), dbc));
             return first;
         }
@@ -71,13 +70,13 @@ public class DocResource {
                     "INNER JOIN links ON links.fromPage = pages.id " +
                     "WHERE links.toPage = ?",
             new int[]{JDBCType.BIGINT.ordinal()});
-    public static List<Doc> getLinkingDocs(Doc target, DbConnector dbc) {
+    public static List<DocId> getLinkingDocs(Doc target, DbConnector dbc) {
         PreparedStatementCreator psc = pscf_linking.newPreparedStatementCreator(new Object[]{target.id});
-        List<Doc> docs = dbc.jdbcTemplate.query(psc, docIdMapper);
+        List<DocId> docs = dbc.jdbcTemplate.query(psc, docIdMapper);
         return docs;
     }
 
-    public static List<Doc> getAllLinking(List<Doc> docs, DbConnector dbc) {
+    public static List<DocId> getAllLinking(List<DocId> docs, DbConnector dbc) {
         if (docs.size() == 0) {
             return new ArrayList<>(0);
         } else if (docs.size() <= 30000) {
@@ -86,11 +85,11 @@ public class DocResource {
                     "INNER JOIN links ON links.fromPage = pages.id " +
                     "WHERE links.toPage IN " + inList;
             Object[] ids = docs.stream().map((doc) -> doc.id).toArray();
-            List<Doc> linkingDocs = dbc.jdbcTemplate.query(sql, ids, docIdMapper);
+            List<DocId> linkingDocs = dbc.jdbcTemplate.query(sql, ids, docIdMapper);
 
             return linkingDocs;
         } else {
-            List<Doc> first = getAllLinking(docs.subList(0, 30000), dbc);
+            List<DocId> first = getAllLinking(docs.subList(0, 30000), dbc);
             first.addAll(getAllLinking(docs.subList(30000, docs.size()), dbc));
             return first;
         }
