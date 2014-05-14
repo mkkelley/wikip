@@ -3,13 +3,11 @@ package wiki;
 import wiki.doc.Doc;
 import wiki.doc.EfficientIndirectionCalculator;
 import wiki.doc.RandomDocGetter;
+import wiki.result.Result;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 /**
  * Created by Michael Kelley on 5/4/14.
@@ -24,32 +22,28 @@ public class RandomSampler {
             url = args[0];
         }
         DbConnector dbc = new DbConnector(url);
-        long n;
-        List<Long> count = dbc.jdbcTemplate.query("SELECT COUNT(*) AS total FROM pages",
-                (resultSet, i) -> resultSet.getLong("total"));
-        n = count.get(0);
 
         final RandomDocGetter rdg = new RandomDocGetter(dbc);
         while (true) {
 //            calculateRandomIndirection(dbc, n);
-            calcParallelRandomIndirection(dbc, n, 500, rdg);
+            calcParallelRandomIndirection(dbc, 500, rdg);
         }
     }
 
     private final static ExecutorService threadPool = Executors.newFixedThreadPool(8);
-    private static void calcParallelRandomIndirection(DbConnector dbc, long n, int number, RandomDocGetter rdg) {
-        List<Future<Integer>> futureList = new ArrayList<>(number);
+    private static void calcParallelRandomIndirection(DbConnector dbc, int number, RandomDocGetter rdg) {
+        CompletionService<Result> cs = new ExecutorCompletionService<>(threadPool);
         for (int i = 0; i < number; i++) {
             Doc fromDoc = rdg.getRandomDoc();
             Doc toDoc = rdg.getRandomDoc();
 
             EfficientIndirectionCalculator eic = new EfficientIndirectionCalculator(fromDoc, toDoc, dbc, 6);
-            Future<Integer> future = threadPool.submit(eic);
-            futureList.add(future);
+            cs.submit(eic);
         }
-        for (Future<Integer> fi : futureList) {
+        for (int i = 0; i < 500; i++) {
             try {
-                fi.get();
+                Result result = cs.take().get();
+                result.save(dbc);
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
                 System.exit(1);
@@ -67,20 +61,4 @@ public class RandomSampler {
 //        System.out.println("Indirection of " + indirection + " from " + fromDoc + " to " + toDoc + " took " + (System.currentTimeMillis() - millis));
 //        return indirection;
 //    }
-
-    private static Doc getRandomDoc(DbConnector dbc, long n) {
-        Doc randDoc = null;
-        do {
-            List<Doc> doc = dbc.jdbcTemplate.query("select * from pages offset random() * ? limit 1 ;", new Object[]{n},
-                    (resultSet, i) -> {
-                        long id = resultSet.getLong(1);
-                        String title = resultSet.getString(2);
-                        return new Doc(id, title, "");
-                    });
-            if (!doc.isEmpty()) {
-                randDoc = doc.get(0);
-            }
-        } while (randDoc == null);
-        return randDoc;
-    }
 }

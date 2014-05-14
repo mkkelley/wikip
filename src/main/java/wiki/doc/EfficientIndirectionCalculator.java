@@ -1,6 +1,8 @@
 package wiki.doc;
 
 import wiki.DbConnector;
+import wiki.result.Result;
+import wiki.result.ResultResource;
 
 import java.sql.Timestamp;
 import java.util.*;
@@ -10,7 +12,7 @@ import java.util.concurrent.Callable;
  * Created by Michael Kelley on 5/10/14.
  * See LICENSE file for license information.
  */
-public class EfficientIndirectionCalculator implements Callable<Integer> {
+public class EfficientIndirectionCalculator implements Callable<Result> {
     private final Doc start;
     private final Doc search;
     private final DbConnector dbc;
@@ -23,14 +25,20 @@ public class EfficientIndirectionCalculator implements Callable<Integer> {
     }
 
     @Override
-    public Integer call() {
+    public Result call() {
         Timestamp ts = new Timestamp(System.currentTimeMillis());
         System.out.println(ts + " Getting indirection between " + start + " and " + search);
+        Optional<Result> result = ResultResource.load(start.id, search.id, limit, dbc);
+        if (result.isPresent()) {
+            System.out.println("Indirection already calculated: " + result.get().indirection);
+            return result.get();
+        }
         long millis = System.currentTimeMillis();
         int indirection = getIndirectionEfficient();
+        long dtime = System.currentTimeMillis() - millis;
         ts = new Timestamp(System.currentTimeMillis());
-        System.out.println(ts + " Indirection of " + indirection + " from " + start + " to " + search + " took " + (System.currentTimeMillis() - millis));
-        return indirection;
+        System.out.println(ts + " Indirection of " + indirection + " from " + start + " to " + search + " took " + dtime);
+        return new Result(start.id, search.id, indirection, limit, dtime);
     }
 
     private int getIndirectionEfficient() {

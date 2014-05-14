@@ -16,6 +16,7 @@ import java.util.List;
  * See LICENSE file for license information.
  */
 public class DocResource {
+    private static DocIdMapper docIdMapper = new DocIdMapper();
 
     public static Doc getDoc(long id, DbConnector dbc) {
         List<Doc> docs = dbc.jdbcTemplate.query("SELECT * FROM pages WHERE id = ?",
@@ -64,7 +65,6 @@ public class DocResource {
         }
     }
 
-    private static DocIdMapper docIdMapper = new DocIdMapper();
     private static PreparedStatementCreatorFactory pscf_linking = new PreparedStatementCreatorFactory(
             "SELECT pages.id, title FROM pages " +
                     "INNER JOIN links ON links.fromPage = pages.id " +
