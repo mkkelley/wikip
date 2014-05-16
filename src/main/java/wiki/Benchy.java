@@ -14,7 +14,7 @@ public class Benchy {
         Doc one = DocResource.getDoc(789980L, dbc);
         Doc two = DocResource.getDoc(3026593L, dbc);
         EfficientIndirectionCalculator eic = new EfficientIndirectionCalculator(one, two, dbc, 6);
-        eic.call().save(dbc);
+        eic.call();
         EfficientIndirectionCalculator eic2 = new EfficientIndirectionCalculator(one, two, dbc, 6);
         eic2.call();
     }
