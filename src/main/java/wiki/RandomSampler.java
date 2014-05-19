@@ -56,7 +56,7 @@ public class RandomSampler {
         }
     }
 
-    private static int calculateRandomIndirection(DbConnector dbc, RandomDocGetter rdg) {
+    private static void calculateRandomIndirection(DbConnector dbc, RandomDocGetter rdg) {
         calcParallelRandomIndirection(dbc, 1, rdg);
     }
 }
