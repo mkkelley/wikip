@@ -55,15 +55,8 @@ public class RandomSampler {
             }
         }
     }
-//
-//    private static int calculateRandomIndirection(DbConnector dbc, long n) {
-//        Doc fromDoc = getRandomDoc(dbc, n);
-//        Doc toDoc = getRandomDoc(dbc, n);
-//        System.out.println("Getting indirection between " + fromDoc + " and " + toDoc);
-//
-//        long millis = System.currentTimeMillis();
-//        int indirection = fromDoc.getIndirectionEfficient(toDoc, dbc, 6);
-//        System.out.println("Indirection of " + indirection + " from " + fromDoc + " to " + toDoc + " took " + (System.currentTimeMillis() - millis));
-//        return indirection;
-//    }
+
+    private static int calculateRandomIndirection(DbConnector dbc, RandomDocGetter rdg) {
+        calcParallelRandomIndirection(dbc, 1, rdg);
+    }
 }
