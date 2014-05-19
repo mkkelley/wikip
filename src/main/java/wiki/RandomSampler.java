@@ -25,11 +25,11 @@ public class RandomSampler {
 
         final RandomDocGetter rdg = new RandomDocGetter(dbc);
         while (true) {
-//            calculateRandomIndirection(dbc, n);
             try {
                 calcParallelRandomIndirection(dbc, 500, rdg);
-            } catch (OutOfMemoryError e) {
+            } catch (Throwable e) {
                 e.printStackTrace();
+                System.gc();
                 continue;
             }
         }
