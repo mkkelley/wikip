@@ -34,8 +34,7 @@ public class DocResource {
             new int[]{JDBCType.BIGINT.ordinal()});
     public static List<DocId> getLinkedDocs(DocId doc, DbConnector dbc) {
         PreparedStatementCreator psc = pscf.newPreparedStatementCreator(new Object[]{doc.id});
-        List<DocId> docs = dbc.jdbcTemplate.query(psc, docIdMapper);
-        return docs;
+        return dbc.jdbcTemplate.query(psc, docIdMapper);
     }
 
     private static String getParamList(int n) {
@@ -55,9 +54,8 @@ public class DocResource {
                     "INNER JOIN links ON links.toPage = pages.id " +
                     "WHERE links.fromPage IN " + inList;
             Object[] ids = docs.stream().map((doc) -> doc.id).toArray();
-            List<DocId> linkedDocs = dbc.jdbcTemplate.query(sql, ids, docIdMapper);
 
-            return linkedDocs;
+            return dbc.jdbcTemplate.query(sql, ids, docIdMapper);
         } else {
             List<DocId> first = getAllLinkedDocs(docs.subList(0, 30000), dbc);
             first.addAll(getAllLinkedDocs(docs.subList(30000, docs.size()), dbc));
@@ -72,8 +70,8 @@ public class DocResource {
             new int[]{JDBCType.BIGINT.ordinal()});
     public static List<DocId> getLinkingDocs(Doc target, DbConnector dbc) {
         PreparedStatementCreator psc = pscf_linking.newPreparedStatementCreator(new Object[]{target.id});
-        List<DocId> docs = dbc.jdbcTemplate.query(psc, docIdMapper);
-        return docs;
+
+        return dbc.jdbcTemplate.query(psc, docIdMapper);
     }
 
     public static List<DocId> getAllLinking(List<DocId> docs, DbConnector dbc) {
@@ -85,9 +83,8 @@ public class DocResource {
                     "INNER JOIN links ON links.fromPage = pages.id " +
                     "WHERE links.toPage IN " + inList;
             Object[] ids = docs.stream().map((doc) -> doc.id).toArray();
-            List<DocId> linkingDocs = dbc.jdbcTemplate.query(sql, ids, docIdMapper);
 
-            return linkingDocs;
+            return dbc.jdbcTemplate.query(sql, ids, docIdMapper);
         } else {
             List<DocId> first = getAllLinking(docs.subList(0, 30000), dbc);
             first.addAll(getAllLinking(docs.subList(30000, docs.size()), dbc));
