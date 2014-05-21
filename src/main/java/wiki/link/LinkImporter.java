@@ -2,8 +2,8 @@ package wiki.link;
 
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import wiki.DbConnector;
-import wiki.doc.DocMapper;
 import wiki.doc.Doc;
+import wiki.doc.DocMapper;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;

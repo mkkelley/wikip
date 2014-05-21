@@ -3,9 +3,6 @@ package wiki;
 import wiki.doc.Doc;
 import wiki.doc.DocId;
 import wiki.doc.DocResource;
-import wiki.doc.EfficientIndirectionCalculator;
-import wiki.result.Result;
-import wiki.result.ResultResource;
 
 import java.sql.Timestamp;
 import java.util.*;

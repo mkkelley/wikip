@@ -3,7 +3,6 @@ package wiki.link;
 import wiki.DbConnector;
 import wiki.doc.Doc;
 import wiki.doc.DocResource;
-import wiki.doc.IndirectionCalculator;
 import wiki.doc.ParallelIndirectionCalculator;
 
 /**

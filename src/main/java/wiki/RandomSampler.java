@@ -5,8 +5,6 @@ import wiki.doc.EfficientIndirectionCalculator;
 import wiki.doc.RandomDocGetter;
 import wiki.result.Result;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.*;
 
 /**

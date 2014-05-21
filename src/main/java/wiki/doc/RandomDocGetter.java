@@ -1,8 +1,6 @@
 package wiki.doc;
 
 import wiki.DbConnector;
-import wiki.doc.Doc;
-import wiki.doc.DocMapper;
 
 import java.util.List;
 
