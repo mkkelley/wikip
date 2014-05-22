@@ -68,7 +68,7 @@ public class DocResource {
                     "INNER JOIN links ON links.fromPage = pages.id " +
                     "WHERE links.toPage = ?",
             new int[]{JDBCType.BIGINT.ordinal()});
-    public static List<DocId> getLinkingDocs(Doc target, DbConnector dbc) {
+    public static List<DocId> getLinkingDocs(DocId target, DbConnector dbc) {
         PreparedStatementCreator psc = pscf_linking.newPreparedStatementCreator(new Object[]{target.id});
 
         return dbc.jdbcTemplate.query(psc, docIdMapper);

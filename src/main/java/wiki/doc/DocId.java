@@ -23,6 +23,10 @@ public class DocId {
         return DocResource.getLinkedDocs(this, dbc);
     }
 
+    public List<DocId> getLinkingDocs(DbConnector dbc) {
+        return DocResource.getLinkingDocs(this, dbc);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof DocId)) {

@@ -43,7 +43,7 @@ public class EfficientIndirectionCalculator implements Callable<Result> {
 
     private int getIndirectionEfficient() {
         int levelsFromThis = limit / 2 + limit % 2;
-        int levelsFromOther = limit / 2 + 1;
+        int levelsFromOther = limit / 2;
         Map<Integer, List<DocId>> fromThis = new HashMap<>();
         Map<Integer, List<DocId>> fromOther = new HashMap<>();
 
@@ -67,13 +67,32 @@ public class EfficientIndirectionCalculator implements Callable<Result> {
         }
 
         int min = limit + 1;
-        for (int thisIndex = 0; thisIndex < levelsFromThis + 1; thisIndex++) {
-            for (int otherIndex = 0; otherIndex < levelsFromOther; otherIndex++) {
+        for (int otherIndex = 0; otherIndex < levelsFromOther + 1; otherIndex++) {
+            for (int thisIndex = 0; thisIndex < levelsFromThis + 1; thisIndex++) {
                 if (otherIndex + thisIndex >= min) continue;
-                List<DocId> fromDocs = fromThis.get(thisIndex);
-                List<DocId> targetDocs = fromOther.get(otherIndex + 1);
-                if (!Collections.disjoint(fromDocs, targetDocs)) {
-                    min = thisIndex + otherIndex;
+                if (otherIndex == levelsFromOther) {
+                    List<DocId> fromDocs = fromThis.get(thisIndex);
+                    List<DocId> targetTargetDocs = fromOther.get(otherIndex);
+
+                    for (int i = 0; i <= targetTargetDocs.size() / 15000; i++) {
+                        if (otherIndex + thisIndex >= min) continue;
+                        int from = i * 15000;
+                        int to = (i + 1) * 15000;
+                        if (to > targetTargetDocs.size()) {
+                            to = targetTargetDocs.size();
+                        }
+                        List<DocId> ttdsl = targetTargetDocs.subList(from, to);
+                        List<DocId> targetDocs = DocResource.getAllLinking(ttdsl, dbc);
+                        if (!Collections.disjoint(fromDocs, targetDocs)) {
+                            min = thisIndex + otherIndex;
+                        }
+                    }
+                } else {
+                    List<DocId> fromDocs = fromThis.get(thisIndex);
+                    List<DocId> targetDocs = fromOther.get(otherIndex + 1);
+                    if (!Collections.disjoint(fromDocs, targetDocs)) {
+                        min = thisIndex + otherIndex;
+                    }
                 }
             }
         }
