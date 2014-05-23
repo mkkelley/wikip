@@ -33,7 +33,7 @@ public class Benchy {
 
     private static int getIndirectionEfficient(Doc start, Doc search, int limit, DbConnector dbc) {
         int levelsFromThis = limit / 2 + limit % 2;
-        int levelsFromOther = limit / 2 + 1;
+        int levelsFromOther = limit / 2;
         Map<Integer, List<DocId>> fromThis = new HashMap<>();
         Map<Integer, List<DocId>> fromOther = new HashMap<>();
 
@@ -57,13 +57,33 @@ public class Benchy {
         }
 
         int min = limit + 1;
-        for (int thisIndex = 0; thisIndex < levelsFromThis + 1; thisIndex++) {
-            for (int otherIndex = 0; otherIndex < levelsFromOther; otherIndex++) {
-                if (otherIndex + thisIndex >= min) continue;
-                List<DocId> fromDocs = fromThis.get(thisIndex);
-                List<DocId> targetDocs = fromOther.get(otherIndex + 1);
-                if (!Collections.disjoint(fromDocs, targetDocs)) {
-                    min = thisIndex + otherIndex;
+        for (int otherIndex = 0; otherIndex < levelsFromOther + 1; otherIndex++) {
+            List<DocId> targetTargetDocs = fromOther.get(otherIndex);
+            if (otherIndex == levelsFromOther) {
+                for (int i = 0; i <= targetTargetDocs.size() / 15000; i++) {
+                    int from = i * 15000;
+                    int to = (i + 1) * 15000;
+                    if (to > targetTargetDocs.size()) {
+                        to = targetTargetDocs.size();
+                    }
+                    List<DocId> ttdsl = targetTargetDocs.subList(from, to);
+                    List<DocId> targetDocs = DocResource.getAllLinking(ttdsl, dbc);
+                    for (int thisIndex = 0; thisIndex < levelsFromThis + 1; thisIndex++) {
+                        if (otherIndex + thisIndex >= min) continue;
+                        List<DocId> fromDocs = fromThis.get(thisIndex);
+
+                        if (!Collections.disjoint(fromDocs, targetDocs)) {
+                            min = thisIndex + otherIndex;
+                        }
+                    }
+                }
+            } else {
+                for (int thisIndex = 0; thisIndex < levelsFromThis + 1; thisIndex++) {
+                    List<DocId> fromDocs = fromThis.get(thisIndex);
+                    List<DocId> targetDocs = fromOther.get(otherIndex + 1);
+                    if (!Collections.disjoint(fromDocs, targetDocs)) {
+                        min = thisIndex + otherIndex;
+                    }
                 }
             }
         }
