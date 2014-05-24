@@ -28,7 +28,8 @@ public class DocResource {
         return docs.get(0);
     }
 
-    private static PreparedStatementCreatorFactory pscf = new PreparedStatementCreatorFactory("SELECT pages.id, title FROM pages " +
+    private static PreparedStatementCreatorFactory pscf = new PreparedStatementCreatorFactory(
+            "SELECT pages.id, title FROM pages " +
             "INNER JOIN links ON links.toPage = pages.id " +
             "WHERE links.fromPage = ?",
             new int[]{JDBCType.BIGINT.ordinal()});

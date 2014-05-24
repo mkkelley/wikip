@@ -13,11 +13,11 @@ import java.util.concurrent.Callable;
  * See LICENSE file for license information.
  */
 public class EfficientIndirectionCalculator implements Callable<Result> {
-    private final Doc start;
-    private final Doc search;
+    private final DocId start;
+    private final DocId search;
     private final DbConnector dbc;
     private final int limit;
-    public EfficientIndirectionCalculator(Doc start, Doc search, DbConnector dbc, int limit) {
+    public EfficientIndirectionCalculator(DocId start, DocId search, DbConnector dbc, int limit) {
         this.start = start;
         this.search = search;
         this.dbc = dbc;
