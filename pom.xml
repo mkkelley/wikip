@@ -25,6 +25,11 @@
             <artifactId>spring-orm</artifactId>
             <version>4.0.4.RELEASE</version>
         </dependency>
+        <dependency>
+            <groupId>com.rabbitmq</groupId>
+            <artifactId>amqp-client</artifactId>
+            <version>3.3.0</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
