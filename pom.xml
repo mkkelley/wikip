@@ -39,7 +39,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>wiki.RandomSampler</mainClass>
+                            <mainClass>wiki.messaging.Dispatcher</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
