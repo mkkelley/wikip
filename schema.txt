@@ -1,0 +1,45 @@
+                            Table "public.results"
+   Column    |  Type   |                      Modifiers                       
+-------------+---------+------------------------------------------------------
+ id          | integer | not null default nextval('results_id_seq'::regclass)
+ frompage    | integer | not null
+ topage      | integer | not null
+ indirection | integer | not null
+ max         | integer | not null
+ timetaken   | integer | not null
+Indexes:
+    "results_pkey" PRIMARY KEY, btree (id)
+Foreign-key constraints:
+    "results_frompage_fkey" FOREIGN KEY (frompage) REFERENCES pages(id)
+    "results_topage_fkey" FOREIGN KEY (topage) REFERENCES pages(id)
+
+                          Table "public.links"
+  Column  |  Type   |                     Modifiers                      
+----------+---------+----------------------------------------------------
+ id       | integer | not null default nextval('links_id_seq'::regclass)
+ frompage | integer | not null
+ topage   | integer | not null
+Indexes:
+    "links_pkey" PRIMARY KEY, btree (id)
+    "from_index" btree (frompage)
+    "to_from_index" btree (frompage, topage)
+    "to_index" btree (topage)
+Foreign-key constraints:
+    "links_frompage_fkey" FOREIGN KEY (frompage) REFERENCES pages(id) ON DELETE CASCADE
+    "links_topage_fkey" FOREIGN KEY (topage) REFERENCES pages(id) ON DELETE CASCADE
+
+     Table "public.pages"
+ Column |  Type   | Modifiers 
+--------+---------+-----------
+ id     | integer | not null
+ title  | text    | not null
+Indexes:
+    "pages_pkey" PRIMARY KEY, btree (id)
+    "title_index" btree (title)
+Referenced by:
+    TABLE "links" CONSTRAINT "links_frompage_fkey" FOREIGN KEY (frompage) REFERENCES pages(id) ON DELETE CASCADE
+    TABLE "links" CONSTRAINT "links_topage_fkey" FOREIGN KEY (topage) REFERENCES pages(id) ON DELETE CASCADE
+    TABLE "results" CONSTRAINT "results_frompage_fkey" FOREIGN KEY (frompage) REFERENCES pages(id)
+    TABLE "results" CONSTRAINT "results_topage_fkey" FOREIGN KEY (topage) REFERENCES pages(id)
+
+
