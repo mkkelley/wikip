@@ -20,13 +20,24 @@ import java.util.List;
 public class LinkImporter {
     public static void main(String[] args) {
         LinkImporter wr = new LinkImporter();
-        wr.readXML("/mnt/dev/wiki/enwiki-20140203-pages-articles.xml");
+        String path = null;
+        for (int i = 0; i < args.length; i++) {
+            if ("path".equals(args[i]) && i + 1 < args.length ) {
+                path = args[i + 1];
+            }
+        }
+        if (path == null) {
+            System.out.println("Please specify the file path.");
+            System.exit(1);
+        }
+        //wr.readXML("/mnt/dev/wiki/enwiki-20140203-pages-articles.xml");
+        wr.readXML(path);
     }
     public boolean readXML(String filename) {
 
-        System.exit(1);
+        //System.exit(1);
         //MAKE BLOODY SURE YOU HAVE SOME HOURS.
-        DbConnector dbc = new DbConnector("jdbc:postgresql:wikip");
+        DbConnector dbc = new DbConnector("localhost");
         dbc.jdbcTemplate.update("TRUNCATE links;");
         try {
             XMLInputFactory xif = XMLInputFactory.newInstance();

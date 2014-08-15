@@ -14,7 +14,7 @@ public class DbConnector {
 
 //        DataSource pcpds = new PGPoolingDataSource();
         HikariConfig config = new HikariConfig();
-        config.setMaximumPoolSize(10);
+        config.setMaximumPoolSize(20);
         config.setDataSourceClassName("org.postgresql.ds.PGSimpleDataSource");
         config.addDataSourceProperty("serverName", url);
         config.addDataSourceProperty("databaseName", "wikip");

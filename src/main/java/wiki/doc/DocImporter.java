@@ -17,10 +17,21 @@ import java.util.List;
 public class DocImporter {
     public static void main(String[] args) {
         DocImporter wr = new DocImporter();
-        wr.readXML("/mnt/dev/wiki/enwiki-20140203-pages-articles.xml");
+        String path = null;
+        for (int i = 0; i < args.length; i++) {
+            if ("path".equals(args[i]) && i + 1 < args.length ) {
+                path = args[i + 1];
+            }
+        }
+        if (path == null) {
+            System.out.println("Please specify the file path.");
+            System.exit(1);
+        }
+        //wr.readXML("/mnt/dev/wiki/enwiki-20140203-pages-articles.xml");
+        wr.readXML(path);
     }
     public boolean readXML(String filename) {
-        DbConnector dbc = new DbConnector("jdbc:postgresql:wikip");
+        DbConnector dbc = new DbConnector("localhost");
         try {
             XMLInputFactory xif = XMLInputFactory.newInstance();
             XMLStreamReader xsr = xif.createXMLStreamReader(new FileInputStream(filename));
